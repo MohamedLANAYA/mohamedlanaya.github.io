@@ -3,118 +3,58 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TD1 – Exo 1 : Géolocalisation</title>
-  <style>
-    body { font-family: Arial, sans-serif; background: #1e1e1e; color: #eee; margin: 0; padding: 15px; }
-    h1 { font-size: 1.4rem; text-align: center; }
-    .bloc { background: #2b2b2b; border-radius: 8px; padding: 15px; margin: 15px auto; max-width: 500px; }
-    .bloc h2 { font-size: 1.1rem; margin-top: 0; color: #6fb3ff; }
-    table { width: 100%; border-collapse: collapse; }
-    td { padding: 6px 4px; border-bottom: 1px solid #3a3a3a; }
-    td:first-child { color: #aaa; width: 45%; }
-    .erreur { color: #ff6b6b; }
-    a { color: #6fb3ff; }
-  </style>
+  <title>Exo 1 : Géolocalisation</title>
 </head>
 <body>
 
   <h1>Exercice 1 : Géolocalisation</h1>
 
-  <!-- Bloc 1 : résultat de getCurrentPosition() (une seule mesure) -->
-  <div class="bloc">
-    <h2>getCurrentPosition() – mesure unique</h2>
-    <table>
-      <tr><td>Longitude</td>   <td id="cur-lon">…</td></tr>
-      <tr><td>Latitude</td>    <td id="cur-lat">…</td></tr>
-      <tr><td>Altitude</td>    <td id="cur-alt">…</td></tr>
-      <tr><td>Précision</td>   <td id="cur-acc">…</td></tr>
-      <tr><td>Vitesse</td>     <td id="cur-speed">…</td></tr>
-      <tr><td>Date</td>        <td id="cur-date">…</td></tr>
-    </table>
-    <p id="cur-err" class="erreur"></p>
-  </div>
+  <h3>getCurrentPosition()</h3>
+  <p>Longitude : <span id="cur-lon">...</span></p>
+  <p>Latitude : <span id="cur-lat">...</span></p>
+  <p>Altitude : <span id="cur-alt">...</span></p>
+  <p>Précision : <span id="cur-acc">...</span></p>
+  <p>Vitesse : <span id="cur-speed">...</span></p>
+  <p>Date : <span id="cur-date">...</span></p>
 
-  <!-- Bloc 2 : résultat de watchPosition() (mis à jour en continu) -->
-  <div class="bloc">
-    <h2>watchPosition() – suivi en continu</h2>
-    <table>
-      <tr><td>Longitude</td>   <td id="watch-lon">…</td></tr>
-      <tr><td>Latitude</td>    <td id="watch-lat">…</td></tr>
-      <tr><td>Altitude</td>    <td id="watch-alt">…</td></tr>
-      <tr><td>Précision</td>   <td id="watch-acc">…</td></tr>
-      <tr><td>Vitesse</td>     <td id="watch-speed">…</td></tr>
-      <tr><td>Date</td>        <td id="watch-date">…</td></tr>
-      <tr><td>Nb de mises à jour</td><td id="watch-count">0</td></tr>
-    </table>
-    <p id="watch-err" class="erreur"></p>
-  </div>
+  <h3>watchPosition()</h3>
+  <p>Longitude : <span id="watch-lon">...</span></p>
+  <p>Latitude : <span id="watch-lat">...</span></p>
+  <p>Altitude : <span id="watch-alt">...</span></p>
+  <p>Précision : <span id="watch-acc">...</span></p>
+  <p>Vitesse : <span id="watch-speed">...</span></p>
+  <p>Date : <span id="watch-date">...</span></p>
+  <p>Nb de mises à jour : <span id="watch-count">0</span></p>
 
-  <p style="text-align:center"><a href="../../index.html">← Retour au sommaire</a></p>
+  <p id="erreur" style="color:red"></p>
+
+  <a href="../../index.html">Retour</a>
 
   <script>
-    // Options communes : on demande la meilleure précision possible (GPS si dispo)
-    const options = {
-      enableHighAccuracy: true, // true = utilise le GPS ; false = wifi/4G (moins précis)
-      timeout: 10000,           // abandon après 10 s sans réponse
-      maximumAge: 0             // pas de position en cache, on veut une mesure fraîche
-    };
+    const options = { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 };
 
-    // Remplit les cases du tableau. "prefixe" = "cur" ou "watch"
     function afficher(prefixe, position) {
       const c = position.coords;
-
-      document.getElementById(prefixe + "-lon").textContent = c.longitude.toFixed(6) + "°";
-      document.getElementById(prefixe + "-lat").textContent = c.latitude.toFixed(6) + "°";
-
-      // altitude et vitesse peuvent valoir null (souvent sur PC ou sans GPS)
-      document.getElementById(prefixe + "-alt").textContent =
-        c.altitude !== null ? c.altitude.toFixed(1) + " m" : "non disponible";
-
-      document.getElementById(prefixe + "-acc").textContent = "± " + c.accuracy.toFixed(0) + " m";
-
-      // speed est en m/s → ×3.6 pour avoir des km/h
-      document.getElementById(prefixe + "-speed").textContent =
-        c.speed !== null ? (c.speed * 3.6).toFixed(1) + " km/h" : "non disponible";
-
-      // timestamp = millisecondes depuis 1970 → on le convertit en date lisible
-      document.getElementById(prefixe + "-date").textContent =
-        new Date(position.timestamp).toLocaleString("fr-FR");
+      document.getElementById(prefixe + "-lon").textContent = c.longitude;
+      document.getElementById(prefixe + "-lat").textContent = c.latitude;
+      document.getElementById(prefixe + "-alt").textContent = c.altitude ?? "non disponible";
+      document.getElementById(prefixe + "-acc").textContent = c.accuracy + " m";
+      document.getElementById(prefixe + "-speed").textContent = c.speed ?? "non disponible";
+      document.getElementById(prefixe + "-date").textContent = new Date(position.timestamp).toLocaleString();
     }
 
-    // Traduit les codes d'erreur de l'API
-    function messageErreur(err) {
-      switch (err.code) {
-        case err.PERMISSION_DENIED:    return "Accès à la position refusé.";
-        case err.POSITION_UNAVAILABLE: return "Position indisponible.";
-        case err.TIMEOUT:              return "Délai dépassé.";
-        default:                       return "Erreur inconnue : " + err.message;
-      }
+    function erreur(err) {
+      document.getElementById("erreur").textContent = "Erreur : " + err.message;
     }
 
-    // Vérifie que le navigateur gère la géolocalisation
-    if (!("geolocation" in navigator)) {
-      document.getElementById("cur-err").textContent = "Géolocalisation non supportée par ce navigateur.";
-    } else {
+    navigator.geolocation.getCurrentPosition(pos => afficher("cur", pos), erreur, options);
 
-      // 1) getCurrentPosition : UNE seule mesure
-      navigator.geolocation.getCurrentPosition(
-        pos => afficher("cur", pos),
-        err => document.getElementById("cur-err").textContent = messageErreur(err),
-        options
-      );
-
-      // 2) watchPosition : appelée À CHAQUE changement de position
-      let compteur = 0;
-      navigator.geolocation.watchPosition(
-        pos => {
-          compteur++;
-          document.getElementById("watch-count").textContent = compteur;
-          afficher("watch", pos);
-        },
-        err => document.getElementById("watch-err").textContent = messageErreur(err),
-        options
-      );
-    }
+    let compteur = 0;
+    navigator.geolocation.watchPosition(pos => {
+      compteur++;
+      document.getElementById("watch-count").textContent = compteur;
+      afficher("watch", pos);
+    }, erreur, options);
   </script>
 
 </body>
