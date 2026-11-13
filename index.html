@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <!-- Indispensable pour un bon affichage sur smartphone -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>R506 : Prog multimédia</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #1e1e1e;
+      color: #eee;
+    }
+    header {
+      background: #2b2b2b;
+      text-align: center;
+      padding: 18px;
+      font-size: 1.6rem;
+      font-weight: bold;
+    }
+    /* Grille de cartes : s'adapte toute seule à la largeur de l'écran */
+    .grille {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+      padding: 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
+    .td {
+      background: #2b2b2b;
+      border-radius: 8px;
+      padding: 15px;
+      text-align: center;
+    }
+    .td h2 { font-size: 1.1rem; margin: 0 0 12px; }
+    .td a {
+      display: block;
+      background: #3a3a3a;
+      color: #ddd;
+      text-decoration: none;
+      padding: 8px;
+      margin: 6px 0;
+      border-radius: 4px;
+    }
+    .td a:hover { background: #505050; }
+    .vide { color: #777; font-style: italic; font-size: .9rem; }
+  </style>
+</head>
+<body>
+
+  <header>R506 : Prog multimédia</header>
+
+  <div class="grille">
+
+    <div class="td">
+      <h2>CartoTD1</h2>
+      <a href="CartoTD1/Exo1/index.html">Exercice 1 – Géolocalisation</a>
+      <a href="CartoTD1/Exo2/index.html">Exercice 2 – Leaflet</a>
+    </div>
+
+    <div class="td">
+      <h2>CartoTD2</h2>
+      <p class="vide">À venir</p>
+    </div>
+
+    <div class="td">
+      <h2>CartoTD3</h2>
+      <p class="vide">À venir</p>
+    </div>
+
+    <div class="td">
+      <h2>CartoTD4</h2>
+      <p class="vide">À venir</p>
+    </div>
+
+  </div>
+
+</body>
+</html>
